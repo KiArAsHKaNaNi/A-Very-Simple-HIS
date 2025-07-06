@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Numerics;
 
 namespace A_Very_Simple_HIS.Models
 {
@@ -7,9 +8,11 @@ namespace A_Very_Simple_HIS.Models
         public int Id { get; set; }
 
         public int PatientId { get; set; }
+        [ValidateNever]
         public Patient Patient { get; set; }
 
         public int DoctorId { get; set; }
+        [ValidateNever]
         public Doctor Doctor { get; set; }
 
         public DateTime VisitDate { get; set; }

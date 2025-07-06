@@ -1,4 +1,6 @@
-﻿namespace A_Very_Simple_HIS.Models
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace A_Very_Simple_HIS.Models
 {
     public class Doctor
     {
@@ -8,6 +10,7 @@
 
         public string Specialty { get; set; }
 
+        [ValidateNever]
         public ICollection<Visit> Visits { get; set; }
     }
 }
