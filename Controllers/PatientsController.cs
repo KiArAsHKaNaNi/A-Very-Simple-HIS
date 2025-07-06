@@ -85,8 +85,8 @@ namespace A_Very_Simple_HIS.Controllers
             {
                 return NotFound();
             }
-            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Id", patient.GenderId);
-            ViewData["InsuranceId"] = new SelectList(_context.Insurances, "Id", "Id", patient.InsuranceId);
+            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name", patient.GenderId);
+            ViewData["InsuranceId"] = new SelectList(_context.Insurances, "Id", "ProviderName", patient.InsuranceId);
             return View(patient);
         }
 
@@ -122,8 +122,8 @@ namespace A_Very_Simple_HIS.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Id", patient.GenderId);
-            ViewData["InsuranceId"] = new SelectList(_context.Insurances, "Id", "Id", patient.InsuranceId);
+            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name", patient.GenderId);
+            ViewData["InsuranceId"] = new SelectList(_context.Insurances, "Id", "ProviderName", patient.InsuranceId);
             return View(patient);
         }
 
