@@ -49,8 +49,8 @@ namespace A_Very_Simple_HIS.Controllers
         // GET: Patients/Create
         public IActionResult Create()
         {
-            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Id");
-            ViewData["InsuranceId"] = new SelectList(_context.Insurances, "Id", "Id");
+            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name");
+            ViewData["InsuranceId"] = new SelectList(_context.Insurances, "Id", "ProviderName");
             return View();
         }
 
@@ -67,8 +67,8 @@ namespace A_Very_Simple_HIS.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Id", patient.GenderId);
-            ViewData["InsuranceId"] = new SelectList(_context.Insurances, "Id", "Id", patient.InsuranceId);
+            ViewData["GenderId"] = new SelectList(_context.Genders, "Id", "Name", patient.GenderId);
+            ViewData["InsuranceId"] = new SelectList(_context.Insurances, "Id", "ProviderName", patient.InsuranceId);
             return View(patient);
         }
 

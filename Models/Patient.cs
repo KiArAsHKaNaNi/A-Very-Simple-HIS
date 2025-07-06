@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace A_Very_Simple_HIS.Models
 {
@@ -14,11 +15,13 @@ namespace A_Very_Simple_HIS.Models
         public DateTime DateOfBirth { get; set; }
 
         public int GenderId { get; set; }
+        [ValidateNever]
         public Gender Gender { get; set; }
 
         public int InsuranceId { get; set; }
+        [ValidateNever]
         public Insurance Insurance { get; set; }
-
+        [ValidateNever]
         public ICollection<Visit> Visits { get; set; }
     }
 }
