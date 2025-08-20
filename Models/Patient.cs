@@ -10,6 +10,8 @@ namespace A_Very_Simple_HIS.Models
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Only letters are allowed.")]
         public string FirstName { get; set; }
 
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Only letters are allowed.")]
+
         public string LastName { get; set; }
 
         public DateTime DateOfBirth { get; set; }
