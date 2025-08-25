@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using A_Very_Simple_HIS.Data;
 using A_Very_Simple_HIS.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace A_Very_Simple_HIS.Controllers
 {
+    [Authorize]
     public class VisitsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,14 +21,14 @@ namespace A_Very_Simple_HIS.Controllers
             _context = context;
         }
 
-        // GET: Visits
+        [Authorize("Visits.View")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Visits.Include(v => v.Doctor).Include(v => v.Patient);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Visits/Details/5
+        [Authorize("Visits.View")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,7 +48,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View(visit);
         }
 
-        // GET: Visits/Create
+        [Authorize("Visits.Create")]
         public IActionResult Create()
         {
             ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName");
@@ -54,9 +56,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View();
         }
 
-        // POST: Visits/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize("Visits.Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,VisitDate,VisitType,Notes")] Visit visit)
@@ -72,7 +72,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View(visit);
         }
 
-        // GET: Visits/Edit/5
+        [Authorize("Visits.Edit")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,9 +90,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View(visit);
         }
 
-        // POST: Visits/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize("Visits.Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,VisitDate,VisitType,Notes")] Visit visit)
@@ -127,7 +125,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View(visit);
         }
 
-        // GET: Visits/Delete/5
+        [Authorize("Visits.Edit")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -148,8 +146,7 @@ namespace A_Very_Simple_HIS.Controllers
         }
 
         // POST: Visits/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        [Authorize("Visits.Edit")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var visit = await _context.Visits.FindAsync(id);
