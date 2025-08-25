@@ -74,7 +74,7 @@ namespace A_Very_Simple_HIS
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Patients}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
             app.Run();
