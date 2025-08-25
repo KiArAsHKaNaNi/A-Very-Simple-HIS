@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using A_Very_Simple_HIS.Data;
 using A_Very_Simple_HIS.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace A_Very_Simple_HIS.Controllers
 {
+    [Authorize]
     public class DoctorsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,13 +21,14 @@ namespace A_Very_Simple_HIS.Controllers
             _context = context;
         }
 
-        // GET: Doctors
+        
+        
         public async Task<IActionResult> Index()
         {
             return View(await _context.Doctors.ToListAsync());
         }
 
-        // GET: Doctors/Details/5
+        [Authorize("Doctors.View")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,14 +46,13 @@ namespace A_Very_Simple_HIS.Controllers
             return View(doctor);
         }
 
-        // GET: Doctors/Create
+        [Authorize("Doctors.Create")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Doctors/Create
-
+        [Authorize("Doctors.Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FullName,Specialty")] Doctor doctor)
@@ -64,7 +66,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View(doctor);
         }
 
-        // GET: Doctors/Edit/5
+        [Authorize("Doctors.Edit")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,8 +82,8 @@ namespace A_Very_Simple_HIS.Controllers
             return View(doctor);
         }
 
-        // POST: Doctors/Edit/5
 
+        [Authorize("Doctors.Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Specialty")] Doctor doctor)
@@ -114,7 +116,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View(doctor);
         }
 
-        // GET: Doctors/Delete/5
+        [Authorize("Doctors.Edit")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -132,7 +134,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View(doctor);
         }
 
-        // POST: Doctors/Delete/5
+        [Authorize("Doctors.Edit")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
