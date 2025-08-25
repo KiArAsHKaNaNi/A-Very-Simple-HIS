@@ -28,6 +28,7 @@ namespace A_Very_Simple_HIS
                 // Doctors
                 options.AddPolicy("Doctors.View", p => p.RequireClaim("Permission", "Doctors.View", "Doctors.FullAccess"));
                 options.AddPolicy("Doctors.Create", p => p.RequireClaim("Permission", "Doctors.Create", "Doctors.FullAccess"));
+                options.AddPolicy("Doctors.Edit", p => p.RequireClaim("Permission", "Doctors.Edit", "Doctors.FullAccess"));
 
                 // Visits
                 options.AddPolicy("Visits.View", p => p.RequireClaim("Permission", "Visits.View", "Visits.FullAccess"));
