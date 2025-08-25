@@ -6,7 +6,7 @@ namespace A_Very_Simple_HIS
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +17,9 @@ namespace A_Very_Simple_HIS
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddAuthorization(options =>
             {
                 // Patients
@@ -41,7 +43,15 @@ namespace A_Very_Simple_HIS
 
             builder.Services.AddControllersWithViews();
 
+
+
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await Seed.SeedDataAsync(services); // runs once here
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
