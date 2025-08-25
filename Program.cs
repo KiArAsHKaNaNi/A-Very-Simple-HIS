@@ -18,6 +18,26 @@ namespace A_Very_Simple_HIS
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddAuthorization(options =>
+            {
+                // Patients
+                options.AddPolicy("Patients.View", p => p.RequireClaim("Permission", "Patients.View", "Patients.FullAccess"));
+                options.AddPolicy("Patients.Create", p => p.RequireClaim("Permission", "Patients.Create", "Patients.FullAccess"));
+                options.AddPolicy("Patients.Edit", p => p.RequireClaim("Permission", "Patients.Edit", "Patients.FullAccess"));
+
+                // Doctors
+                options.AddPolicy("Doctors.View", p => p.RequireClaim("Permission", "Doctors.View", "Doctors.FullAccess"));
+                options.AddPolicy("Doctors.Create", p => p.RequireClaim("Permission", "Doctors.Create", "Doctors.FullAccess"));
+
+                // Visits
+                options.AddPolicy("Visits.View", p => p.RequireClaim("Permission", "Visits.View", "Visits.FullAccess"));
+                options.AddPolicy("Visits.Create", p => p.RequireClaim("Permission", "Visits.Create", "Visits.FullAccess"));
+                options.AddPolicy("Visits.Edit", p => p.RequireClaim("Permission", "Visits.Edit", "Visits.FullAccess"));
+
+                // Admin/perhaps other global policies
+                options.AddPolicy("ManageUsers", p => p.RequireClaim("Permission", "ManageUsers", "Admin.FullAccess"));
+            });
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
