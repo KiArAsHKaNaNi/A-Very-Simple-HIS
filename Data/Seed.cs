@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using A_Very_Simple_HIS.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace A_Very_Simple_HIS.Data
 {
@@ -8,7 +9,7 @@ namespace A_Very_Simple_HIS.Data
         public static async Task SeedDataAsync(IServiceProvider services)
         {
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
             string[] roles = new[] { "Admin", "Supervisor", "Doctor", "Receptionist" };
 
@@ -54,7 +55,7 @@ namespace A_Very_Simple_HIS.Data
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
-                adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true};
+                adminUser = new ApplicationUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true};
                 var createAdmin = await userManager.CreateAsync(adminUser, "Admin123!");
                 if (createAdmin.Succeeded)
                 {
