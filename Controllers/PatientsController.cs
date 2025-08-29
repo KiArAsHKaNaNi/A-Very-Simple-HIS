@@ -56,7 +56,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View();
         }
 
-        [Authorize("Patients.Crete")]
+        [Authorize("Patients.Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,DateOfBirth,GenderId,InsuranceId")] Patient patient)

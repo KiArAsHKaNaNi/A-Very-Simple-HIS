@@ -1,19 +1,25 @@
 ﻿using A_Very_Simple_HIS.Models;
 using A_Very_Simple_HIS.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace A_Very_Simple_HIS.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserController(UserManager<ApplicationUser> userManager)
+        public UserController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<ActionResult> Index()
@@ -26,41 +32,65 @@ namespace A_Very_Simple_HIS.Controllers
                 var roles = await _userManager.GetRolesAsync(u);
                 model.Add(new UserViewModel
                 {
-                    Id = u.Id,
+                    //Id = u.Id,
+                    UserName = u.UserName,
                     FullName = u.FullName,
                     EmailAddress = u.Email,
-                    Roles = roles
+                    Roles = roles.Select(r => new SelectListItem
+                    {
+                        Text = r,
+                        Value = r
+                    }).ToList()
                 });
             }
 
             return View(model);
         }
 
-        // GET: UserController/Details/5
-        public ActionResult Details(int id)
+
+        public async Task<ActionResult> Create()
         {
-            return View();
+            var roles = await _roleManager.Roles.ToListAsync();
+            var model = new UserViewModel
+            {
+                Roles = roles.Select(r => new SelectListItem
+                {
+                    Text = r.Name,
+                    Value = r.Name
+                }).ToList()
+            } ;
+            return View(model);
         }
 
-        // GET: UserController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: UserController/Create
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(UserViewModel userViewModel)
         {
-            try
+            
+            
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var newUser = new ApplicationUser
+                {
+                    UserName = userViewModel.UserName,
+                    Email = userViewModel.EmailAddress,
+                    FullName = userViewModel.FullName,
+                };
+                var result = await _userManager.CreateAsync(newUser, userViewModel.Password);
+                if (result.Succeeded) 
+                {
+                    if (userViewModel.SelectedRole != null)
+                    {
+                        await _userManager.AddToRoleAsync(newUser, userViewModel.SelectedRole);
+                    }
+
+                    return RedirectToAction("Index");
+                }
             }
-            catch
-            {
-                return View();
-            }
+            return View();
+
+
         }
 
         // GET: UserController/Edit/5
