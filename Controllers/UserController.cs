@@ -93,25 +93,94 @@ namespace A_Very_Simple_HIS.Controllers
 
         }
 
-        // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(string username)
         {
-            return View();
+            if (string.IsNullOrEmpty(username))
+                return NotFound();
+            var roles = await _roleManager.Roles.ToListAsync();
+            var user = await _userManager.FindByNameAsync(username);
+            var model = new UserViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                EmailAddress = user.Email,
+                FullName = user.FullName,
+                Roles = roles.Select(r => new SelectListItem
+                {
+                    Text = r.Name,
+                    Value = r.Name
+                }).ToList()
+            };
+            return View(model);
         }
 
-        // POST: UserController/Edit/5
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(UserViewModel userViewModel)
         {
-            try
+            if (!ModelState.IsValid)
+                userViewModel.Roles = _roleManager.Roles.Select(r => new SelectListItem
+                {
+                    Value = r.Name,
+                    Text = r.Name,
+                    Selected = r.Name == userViewModel.SelectedRole
+                }).ToList();
+
+            var user = await _userManager.FindByIdAsync(userViewModel.Id);
+            if (user == null)
+                return NotFound();
+
+            user.UserName = userViewModel.UserName;
+            user.Email = userViewModel.EmailAddress;
+            user.FullName = userViewModel.FullName;
+
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
             {
-                return RedirectToAction(nameof(Index));
+                foreach (var error in updateResult.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View(userViewModel);
             }
-            catch
+
+            if (!string.IsNullOrWhiteSpace(userViewModel.Password))
             {
-                return View();
+                var removePass = await _userManager.RemovePasswordAsync(user);
+                if (!removePass.Succeeded)
+                {
+                    foreach (var error in removePass.Errors)
+                        ModelState.AddModelError("", error.Description);
+                    return View(userViewModel);
+                }
+
+                var addPass = await _userManager.AddPasswordAsync(user, userViewModel.Password);
+                if (!addPass.Succeeded)
+                {
+                    foreach (var error in addPass.Errors)
+                        ModelState.AddModelError("", error.Description);
+                    return View(userViewModel);
+                }
             }
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var currentRole = currentRoles.FirstOrDefault();
+
+            if (currentRole != userViewModel.SelectedRole)
+            {
+                if (currentRole != null)
+                {
+                    await _userManager.RemoveFromRoleAsync(user, currentRole);
+                }
+
+                if (!string.IsNullOrEmpty(userViewModel.SelectedRole))
+                {
+                    await _userManager.AddToRoleAsync(user, userViewModel.SelectedRole);
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: UserController/Delete/5
