@@ -58,17 +58,17 @@ namespace A_Very_Simple_HIS.Controllers
                     Text = r.Name,
                     Value = r.Name
                 }).ToList()
-            } ;
+            };
             return View(model);
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(UserViewModel userViewModel)
         {
-            
-            
+
+
             if (ModelState.IsValid)
             {
                 var newUser = new ApplicationUser
@@ -78,7 +78,7 @@ namespace A_Very_Simple_HIS.Controllers
                     FullName = userViewModel.FullName,
                 };
                 var result = await _userManager.CreateAsync(newUser, userViewModel.Password);
-                if (result.Succeeded) 
+                if (result.Succeeded)
                 {
                     if (userViewModel.SelectedRole != null)
                     {
@@ -114,7 +114,7 @@ namespace A_Very_Simple_HIS.Controllers
             return View(model);
         }
 
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(UserViewModel userViewModel)
@@ -183,25 +183,62 @@ namespace A_Very_Simple_HIS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: UserController/Delete/5
-        public ActionResult Delete(int id)
+
+        public async Task<ActionResult> Delete(string username)
         {
-            return View();
+            if (string.IsNullOrEmpty(username))
+                return NotFound();
+
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+                return NotFound();
+
+            var model = new UserViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                EmailAddress = user.Email,
+                FullName = user.FullName
+            };
+
+            return View(model);
         }
 
-        // POST: UserController/Delete/5
-        [HttpPost]
+
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(string username)
         {
-            try
+            if (string.IsNullOrEmpty(username))
+                return NotFound();
+
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+                return NotFound();
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (result.Succeeded)
             {
                 return RedirectToAction(nameof(Index));
             }
-            catch
+
+            // If failed, add errors to ModelState
+            foreach (var error in result.Errors)
             {
-                return View();
+                ModelState.AddModelError("", error.Description);
             }
+
+            // Show the same view again with errors
+            var model = new UserViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                EmailAddress = user.Email,
+                FullName = user.FullName
+            };
+
+            return View("Delete", model);
         }
     }
 }

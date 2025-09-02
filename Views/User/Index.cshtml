@@ -38,8 +38,7 @@
                 </td>
             <td>
                 <a asp-action="Edit" asp-route-username="@item.UserName">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Delete" asp-route-username="@item.UserName">Delete</a>
             </td>
         </tr>
 }
