@@ -29,3 +29,34 @@ footer.footer {
     height: 60px;
     line-height: 60px;
 }
+
+/*.icon-box {
+
+    font-size: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}*/
+
+
+.full-height {
+    min-height: 100vh;
+    height: 100%;
+}
+.iconbox-card {
+    font-size: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (min-width: 992px) {
+    .icon-box {
+        font-size: 90px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+
