@@ -20,9 +20,9 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
+@*                      <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
+                        </li> *@
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -37,7 +37,18 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - A_Very_Simple_HIS - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row justify-content-between px-5 gy-4 align-items-center ">
+                <div class="col-auto py-1">
+                    <p class="mb-0">Copyright by Kiarash Kanani</p>
+                </div>
+
+                <div class=" col-auto">
+                    <div href="" class="social-icons">
+                        <a href=""><i class="lab la-linkedin-in"></i></a>
+                        <a href=""><i class="lab la-github"></i></a>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
