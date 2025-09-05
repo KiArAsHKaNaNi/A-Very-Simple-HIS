@@ -19,59 +19,65 @@
 
                 <div class="row mt-5">
                     <div class="col-md-4" >
-                        <div class="p-4 bg-base rounded-3 shadow-effect h-100">
-                            <div class="row">
-                                <div class="col-6 iconbox-card rounded-3 ">
-                                    <i class="las la-user-injured"></i>
+                        <div class="p-4 card-link bg-secondary rounded-3 shadow-effect h-100">
+                            <a asp-controller="patients">
+                                <div class="row">
+                                    <div class="col-4 iconbox-card rounded-3 ">
+                                        <i class="las la-user-injured"></i>
+                                    </div>
+                                    <div class="col-8 align-items-center">
+                                        <h4 class="mb-3 mt-2">
+                                            Patients
+                                        </h4>
+                                        <p>
+                                            Patient information
+                                            and records
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="col-6 align-items-center">
-                                    <h4 class="mb-3 mt-2">
-                                        Patients
-                                    </h4>
-                                    <p>
-                                        Patient information
-                                        and records
-                                    </p>
-                                </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
 
                     <div class="col-md-4">
-                        <div class="p-4 bg-base rounded-3 shadow-effect h-100">
-                            <div class="row">
-                                <div class="col-6 iconbox-card rounded-3 ">
-                                    <i class="las la-user-nurse"></i>
+                        <div class="p-4 card-link bg-secondary shadow-effect h-100">
+                            <a asp-controller="doctors">
+                                <div class="row">
+                                    <div class="col-4 iconbox-card rounded-3 ">
+                                        <i class="las la-user-nurse"></i>
+                                    </div>
+                                    <div class="col-8 align-items-center">
+                                        <h4 class="mb-3 mt-2">
+                                            Doctors
+                                        </h4>
+                                        <p>
+                                            Doctor profiles and
+                                            schedules
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="col-6 align-items-center">
-                                    <h4 class="mb-3 mt-2">
-                                        Doctors
-                                    </h4>
-                                    <p>
-                                        Doctor profiles and
-                                        schedules
-                                    </p>
-                                </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
 
                     <div class="col-md-4">
-                        <div class="p-4 bg-base rounded-3 shadow-effect h-100">
-                            <div class="row">
-                                <div class="col-6 iconbox-card rounded-3 ">
-                                    <i class="las la-calendar-check"></i>
+                        <div class="p-4 bg-base card-link bg-secondary rounded-3 shadow-effect h-100">
+                            <a asp-controller="visits">
+                                <div class="row">
+                                    <div class="col-4 iconbox-card rounded-3 ">
+                                        <i class="las la-calendar-check"></i>
+                                    </div>
+                                    <div class="col-8 align-items-center">
+                                        <h4 class="mb-3 mt-2">
+                                            Appointments
+                                        </h4>
+                                        <p>
+                                            Appointment schedulin
+                                            and management
+                                        </p>
+                                    </div>
                                 </div>
-                                <div class="col-6 align-items-center">
-                                    <h4 class="mb-3 mt-2">
-                                        Appointments
-                                    </h4>
-                                    <p>
-                                        Appointment schedulin
-                                        and management
-                                    </p>
-                                </div>
-                            </div>
+                            </a>
                         </div>
                     </div>
                 </div>
