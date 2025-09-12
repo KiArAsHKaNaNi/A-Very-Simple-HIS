@@ -1,48 +1,53 @@
-﻿@model A_Very_Simple_HIS.Models.Patient
+﻿@model A_Very_Simple_HIS.ViewModels.PatientViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>Patient</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DateOfBirth)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Insurance)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Insurance.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<section class="full-height row d-flex justify-content-center align-items-center p-5">
+    <div class="container p-5">
+        <div>
+            <h4>Patient Details</h4>
+            <hr />
+            <dl class="row gy-2">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.FirstName)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.LastName)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.LastName)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.DateOfBirth)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.DateOfBirth)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.GenderName)
+                </dt>
+                <dt class="col-sm-10">
+                    @Html.DisplayFor(model => model.GenderName)
+                </dt>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.InsuranceName)
+                </dt>
+                <dt class="col-sm-10">
+                    @Html.DisplayFor(model => model.InsuranceName)
+                </dt>
+            </dl>
+        </div>
+        <div>
+            <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> 
+            <a class="btn btn-outline-primary" asp-action="Index">Back to List</a>
+        </div>
+
+    </div>
+</section>

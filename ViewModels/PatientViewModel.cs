@@ -30,14 +30,14 @@ namespace A_Very_Simple_HIS.ViewModels
         public int GenderId { get; set; }
 
         [Display(Name = "Gender")]
-        public string GenderName { get; set; } 
+        public string GenderName { get; set; } = string.Empty;
 
         [Required]
         [Display(Name = "Insurance")]
         public int InsuranceId { get; set; }
 
         [Display(Name = "Insurance")]
-        public string InsuranceName { get; set; } 
+        public string InsuranceName { get; set; } = string.Empty; 
 
         public int VisitsCount { get; set; }
     }

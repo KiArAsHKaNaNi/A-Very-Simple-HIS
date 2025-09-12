@@ -48,14 +48,13 @@ namespace A_Very_Simple_HIS.Controllers
             }
 
             var vm = MapToViewModel(patient);
-            vm.VisitsCount = patient.Visits?.Count ?? 0;
             return View(vm);
         }
 
         [Authorize("Patients.Create")]
         public IActionResult Create()
         {
-            PopulateGenderAndInsuranceSelectLists();
+            PopulateSelectLists();
             var vm = new PatientViewModel
             {
                 DateOfBirth = DateTime.Today.AddYears(-20) 
@@ -70,7 +69,7 @@ namespace A_Very_Simple_HIS.Controllers
         {
             if (!ModelState.IsValid)
             {
-                PopulateGenderAndInsuranceSelectLists();
+                PopulateSelectLists();
                 return View(vm);
             }
 
@@ -93,11 +92,16 @@ namespace A_Very_Simple_HIS.Controllers
         {
             if (id == null) return NotFound();
 
-            var patient = await _context.Patients.FindAsync(id);
+            var patient = await _context.Patients
+            .Include(p => p.Gender)
+            .Include(p => p.Insurance)
+            .Include(p => p.Visits)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
             if (patient == null) return NotFound();
 
             var vm = MapToViewModel(patient);
-            PopulateGenderAndInsuranceSelectLists(patient.GenderId, patient.InsuranceId);
+            PopulateSelectLists(patient.GenderId, patient.InsuranceId);
             return View(vm);
         }
 
@@ -110,7 +114,7 @@ namespace A_Very_Simple_HIS.Controllers
 
             if (!ModelState.IsValid)
             {
-                PopulateGenderAndInsuranceSelectLists(vm.GenderId, vm.InsuranceId);
+                PopulateSelectLists(vm.GenderId, vm.InsuranceId);
                 return View(vm);
             }
 
@@ -146,6 +150,7 @@ namespace A_Very_Simple_HIS.Controllers
             var patient = await _context.Patients
                 .Include(p => p.Gender)
                 .Include(p => p.Insurance)
+                .Include(p => p.Visits)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (patient == null) return NotFound();
@@ -174,7 +179,7 @@ namespace A_Very_Simple_HIS.Controllers
         }
 
         #region API Calls
-        [HttpGet]
+ 
         [HttpGet]
         [Authorize("Patients.View")]
         public IActionResult GetAll()
@@ -211,7 +216,7 @@ namespace A_Very_Simple_HIS.Controllers
             };
         }
 
-        private void PopulateGenderAndInsuranceSelectLists(int? selectedGenderId = null, int? selectedInsuranceId = null)
+        private void PopulateSelectLists(int? selectedGenderId = null, int? selectedInsuranceId = null)
         {
             ViewData["GenderId"] = new SelectList(_context.Genders.AsNoTracking().ToList(), "Id", "Name", selectedGenderId);
             ViewData["InsuranceId"] = new SelectList(_context.Insurances.AsNoTracking().ToList(), "Id", "ProviderName", selectedInsuranceId);
