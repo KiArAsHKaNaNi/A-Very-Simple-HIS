@@ -74,15 +74,23 @@ namespace A_Very_Simple_HIS.Controllers
         [Authorize("Doctors.Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Specialty")] Doctor doctor)
+        public async Task<IActionResult> Create(DoctorViewModel vm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(doctor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(vm);
             }
-            return View(doctor);
+
+            var doctor = new Doctor()
+            {
+                FirstName = vm.FirstName,
+                LastName = vm.LastName,
+                Specialty = vm.Specialty,
+            };
+            _context.Add(doctor);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize("Doctors.Edit")]
@@ -93,46 +101,58 @@ namespace A_Very_Simple_HIS.Controllers
                 return NotFound();
             }
 
-            var doctor = await _context.Doctors.FindAsync(id);
-            if (doctor == null)
+            var vm = await _context.Doctors.Where(x => x.Id == id).Select(d => new DoctorViewModel()
             {
-                return NotFound();
-            }
-            return View(doctor);
+                FirstName = d.FirstName,
+                LastName = d.LastName,
+                Specialty = d.Specialty,
+            }).FirstOrDefaultAsync();
+
+            return View(vm);
         }
 
 
         [Authorize("Doctors.Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,Specialty")] Doctor doctor)
+        public async Task<IActionResult> Edit(int id, DoctorViewModel vm)
         {
-            if (id != doctor.Id)
+            if (id != vm.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) 
             {
-                try
-                {
-                    _context.Update(doctor);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DoctorExists(doctor.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(vm);
             }
-            return View(doctor);
+
+            var doctor = await _context.Doctors.FindAsync(id);
+            if (doctor == null)
+            {
+                return NotFound();
+            }
+            doctor.FirstName = vm.FirstName;
+            doctor.LastName = vm.LastName;
+            doctor.Specialty = vm.Specialty;
+
+            try
+            {
+                _context.Update(doctor);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DoctorExists(doctor.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize("Doctors.Edit")]

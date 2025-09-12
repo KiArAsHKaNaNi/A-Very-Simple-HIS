@@ -22,6 +22,6 @@ namespace A_Very_Simple_HIS.ViewModels
         public string Specialty { get; set; }
 
         [ValidateNever]
-        public ICollection<VisitViewModel> Visits { get; set; }
+        public ICollection<VisitViewModel> Visits { get; set; } = new List<VisitViewModel>();
     }
 }
