@@ -155,38 +155,7 @@ namespace A_Very_Simple_HIS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize("Doctors.Edit")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var doctor = await _context.Doctors
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (doctor == null)
-            {
-                return NotFound();
-            }
-
-            return View(doctor);
-        }
-
-        [Authorize("Doctors.Edit")]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var doctor = await _context.Doctors.FindAsync(id);
-            if (doctor != null)
-            {
-                _context.Doctors.Remove(doctor);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool DoctorExists(int id)
         {
@@ -212,6 +181,21 @@ namespace A_Very_Simple_HIS.Controllers
 
             return Json(new { data = allDoctors });
         }
+
+        [HttpPost]
+        [Authorize("Doctors.Edit")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var objFromDb = await _context.Doctors.FirstOrDefaultAsync(p => p.Id == id);
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error While Deleting" });
+            }
+            _context.Doctors.Remove(objFromDb);
+            await _context.SaveChangesAsync();
+            return Json(new { success = true, data = "Delete Successful" });
+        }
+
         #endregion
 
 

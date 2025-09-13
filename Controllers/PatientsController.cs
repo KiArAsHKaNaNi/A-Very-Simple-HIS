@@ -142,36 +142,36 @@ namespace A_Very_Simple_HIS.Controllers
         }
 
 
-        [Authorize("Patients.Edit")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
+        //[Authorize("Patients.Edit")]
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null) return NotFound();
 
-            var patient = await _context.Patients
-                .Include(p => p.Gender)
-                .Include(p => p.Insurance)
-                .Include(p => p.Visits)
-                .FirstOrDefaultAsync(m => m.Id == id);
+        //    var patient = await _context.Patients
+        //        .Include(p => p.Gender)
+        //        .Include(p => p.Insurance)
+        //        .Include(p => p.Visits)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (patient == null) return NotFound();
+        //    if (patient == null) return NotFound();
 
-            var vm = MapToViewModel(patient);
-            return View(vm);
-        }
+        //    var vm = MapToViewModel(patient);
+        //    return View(vm);
+        //}
 
-        [Authorize("Patients.Edit")]
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var patient = await _context.Patients.FindAsync(id);
-            if (patient != null)
-            {
-                _context.Patients.Remove(patient);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
-        }
+        //[Authorize("Patients.Edit")]
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var patient = await _context.Patients.FindAsync(id);
+        //    if (patient != null)
+        //    {
+        //        _context.Patients.Remove(patient);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool PatientExists(int id)
         {
@@ -200,6 +200,21 @@ namespace A_Very_Simple_HIS.Controllers
 
             return Json(new { data = allPatients });
         }
+
+        [HttpPost]
+        [Authorize("Patients.Edit")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var objFromDb = await _context.Patients.FirstOrDefaultAsync(p => p.Id == id);
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error While Deleting" });
+            }
+            _context.Patients.Remove(objFromDb);
+            await _context.SaveChangesAsync();
+            return Json(new { success = true, data = "Delete Successful" });
+        }
+
         #endregion
 
         private static PatientViewModel MapToViewModel(Patient p)
