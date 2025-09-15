@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using A_Very_Simple_HIS.Data;
 using A_Very_Simple_HIS.Models;
 using Microsoft.AspNetCore.Authorization;
+using A_Very_Simple_HIS.ViewModels;
 
 namespace A_Very_Simple_HIS.Controllers
 {
@@ -24,8 +25,7 @@ namespace A_Very_Simple_HIS.Controllers
         [Authorize("Visits.View")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Visits.Include(v => v.Doctor).Include(v => v.Patient);
-            return View(await applicationDbContext.ToListAsync());
+            return View();
         }
 
         [Authorize("Visits.View")]
@@ -36,16 +36,22 @@ namespace A_Very_Simple_HIS.Controllers
                 return NotFound();
             }
 
-            var visit = await _context.Visits
-                .Include(v => v.Doctor)
-                .Include(v => v.Patient)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (visit == null)
+            var vm =  _context.Visits
+                .Where(v => v.Id == id)
+                .Select(v => new VisitViewModel()
+                {
+                    Id = v.Id,
+                    PatientName = v.Patient.FirstName + " " + v.Patient.LastName,
+                    DoctorName = v.Doctor.FirstName + " " + v.Doctor.LastName,
+                    VisitDate = v.VisitDate
+                })
+                .ToList();
+            if (vm == null)
             {
                 return NotFound();
             }
 
-            return View(visit);
+            return View(vm);
         }
 
         [Authorize("Visits.Create")]
@@ -163,5 +169,27 @@ namespace A_Very_Simple_HIS.Controllers
         {
             return _context.Visits.Any(e => e.Id == id);
         }
+
+        #region API Calls
+
+        [HttpGet]
+        [Authorize("Doctors.View")]
+        public IActionResult GetAll()
+        {
+            var allVisits = _context.Visits
+                .Select(v => new
+                {
+                    v.Id,
+                    patientName = v.Patient.FirstName + " " + v.Patient.LastName,
+                    doctorName = v.Doctor.FirstName + " " + v.Doctor.LastName,
+                    visitDate = v.VisitDate
+                })
+                .ToList();
+
+            return Json(new { data = allVisits });
+        }
+
+        #endregion
+
     }
 }

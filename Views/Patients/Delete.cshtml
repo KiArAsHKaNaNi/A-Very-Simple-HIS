@@ -1,4 +1,4 @@
-﻿@model A_Very_Simple_HIS.Models.Patient
+﻿@model A_Very_Simple_HIS.ViewModels.PatientViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -30,17 +30,11 @@
             @Html.DisplayFor(model => model.DateOfBirth)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
+            @Html.DisplayNameFor(model => model.GenderName)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender.Id)
-        </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Insurance)
+            @Html.DisplayNameFor(model => model.InsuranceName)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Insurance.Id)
-        </dd>
     </dl>
     
     <form asp-action="Delete">

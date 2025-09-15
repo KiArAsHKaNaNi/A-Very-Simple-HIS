@@ -4,38 +4,29 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<section class="full-height">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4 ">
+            <h1 class="m-0">Doctors</h1>
+            <div class="align-self-end mb-2">
+                <a class="btn-brand bg-secondary text-light" asp-action="Create">Register Doctor</a>
+            </div>
+        </div>
+        <table id="tableData" class="table">
+            <thead>
+                <tr>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Specialty</th>
+                    <th>Visits</th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Specialty)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Specialty)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+</section>
+
+@section scripts{
+    <script src="~/js/Doctors.js"></script>
 }
-    </tbody>
-</table>
