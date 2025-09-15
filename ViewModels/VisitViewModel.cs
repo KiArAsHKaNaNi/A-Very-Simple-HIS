@@ -10,11 +10,9 @@ namespace A_Very_Simple_HIS.ViewModels
         public int PatientId { get; set; }
         public string PatientName { get; set; }
 
-        //public int DoctorId { get; set; }
-        //public string DoctorName { get; set; }
+        public int DoctorId { get; set; }
+        public string DoctorName { get; set; }
         public DateTime VisitDate { get; set; }
-        public string VisitType { get; set; } // "Inpatient" or "Outpatient"
-
         public string Notes { get; set; }
     }
 }

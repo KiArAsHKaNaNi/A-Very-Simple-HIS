@@ -52,7 +52,6 @@ namespace A_Very_Simple_HIS.Controllers
                         PatientId = v.PatientId,
                         PatientName = v.Patient.FirstName + " " + v.Patient.LastName,
                         VisitDate = v.VisitDate,
-                        VisitType = v.VisitType,
                         Notes = v.Notes
                     })
                     .ToList()
@@ -216,7 +215,6 @@ namespace A_Very_Simple_HIS.Controllers
                     PatientId = v.PatientId,
                     PatientName = v.Patient.FirstName + " " + v.Patient.LastName,
                     VisitDate = v.VisitDate,
-                    VisitType = v.VisitType,
                     Notes = v.Notes
                 })
                 .ToList()};
