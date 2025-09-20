@@ -17,7 +17,7 @@ namespace A_Very_Simple_HIS.Models
 
         public DateTime VisitDate { get; set; }
 
-        public string VisitType { get; set; } // "Inpatient" or "Outpatient"
+        public string VisitType { get; set; } = string.Empty; // "Inpatient" or "Outpatient"
 
         public string Notes { get; set; }
     }

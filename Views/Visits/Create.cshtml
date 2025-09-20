@@ -1,51 +1,56 @@
-﻿@model A_Very_Simple_HIS.Models.Visit
+﻿@model A_Very_Simple_HIS.ViewModels.VisitViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<section class="full-height row d-flex justify-content-center align-items-center p-5">
+    <div class="container p-5">
+        <h4>Add a visit</h4>
+        <hr />
+        <div class="row gy-4">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="PatientId" class="control-label"></label>
+                        <select asp-for="PatientId" class="form-control" asp-items="ViewBag.PatientId" >
+                            <option value="">-- Pick a Patient --</option>
+                        </select>
+                        <span asp-validation-for="PatientId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DoctorId" class="control-label"></label>
+                        <select asp-for="DoctorId" class="form-control" asp-items="ViewBag.DoctorId">
+                            <option value="">-- Pick a Doctor --</option>
+                        </select>
+                        <span asp-validation-for="DoctorId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="VisitDate" class="control-label"></label>
+                        <input asp-for="VisitDate" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="VisitDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Notes" class="control-label"></label>
+                        <textarea asp-for="Notes" class="form-control"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-3">
+                        <input type="submit" value="Save" class="btn btn-outline-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
 
-<h4>Visit</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PatientId" class="control-label"></label>
-                <select asp-for="PatientId" class ="form-control" asp-items="ViewBag.PatientId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="DoctorId" class="control-label"></label>
-                <select asp-for="DoctorId" class ="form-control" asp-items="ViewBag.DoctorId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="VisitDate" class="control-label"></label>
-                <input asp-for="VisitDate" class="form-control" />
-                <span asp-validation-for="VisitDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="VisitType" class="control-label"></label>
-                <input asp-for="VisitType" class="form-control" />
-                <span asp-validation-for="VisitType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
-                <input asp-for="Notes" class="form-control" />
-                <span asp-validation-for="Notes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        <div>
+            <a class="btn btn-outline-primary mt-2" asp-action="Index">Back to List</a>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+</section>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

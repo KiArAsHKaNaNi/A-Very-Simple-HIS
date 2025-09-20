@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using A_Very_Simple_HIS.Data;
+using A_Very_Simple_HIS.Models;
+using A_Very_Simple_HIS.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using A_Very_Simple_HIS.Data;
-using A_Very_Simple_HIS.Models;
-using Microsoft.AspNetCore.Authorization;
-using A_Very_Simple_HIS.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using static Azure.Core.HttpHeader;
 
 namespace A_Very_Simple_HIS.Controllers
 {
@@ -57,25 +59,36 @@ namespace A_Very_Simple_HIS.Controllers
         [Authorize("Visits.Create")]
         public IActionResult Create()
         {
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "FullName");
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "FirstName");
-            return View();
+            PopulateSelectLists();
+            var vm = new VisitViewModel()
+            {
+                VisitDate = DateTime.Now
+            };
+            return View(vm);
         }
 
         [Authorize("Visits.Create")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PatientId,DoctorId,VisitDate,VisitType,Notes")] Visit visit)
+        public async Task<IActionResult> Create(VisitViewModel vm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(visit);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                PopulateSelectLists();
+                return View(vm);
             }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "Id", visit.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "Id", visit.PatientId);
-            return View(visit);
+
+            var visit = new Visit
+            {
+                PatientId = vm.PatientId,
+                DoctorId = vm.DoctorId,
+                VisitDate = vm.VisitDate,
+                Notes = vm.Notes,
+            };
+
+            _context.Add(visit);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         [Authorize("Visits.Edit")]
@@ -86,84 +99,62 @@ namespace A_Very_Simple_HIS.Controllers
                 return NotFound();
             }
 
-            var visit = await _context.Visits.FindAsync(id);
+            var visit = await _context.Visits.Include(v => v.Patient).Include(v => v.Doctor).FirstOrDefaultAsync();
             if (visit == null)
             {
                 return NotFound();
             }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "Id", visit.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "Id", visit.PatientId);
-            return View(visit);
+            var vm = new VisitViewModel()
+            {
+                Id = visit.Id,
+                VisitDate = visit.VisitDate,
+                PatientName = visit.Patient?.FirstName + " " + visit.Patient?.LastName,
+                DoctorName = visit.Doctor?.FirstName + " " + visit.Doctor?.LastName,
+                Notes = visit.Notes,
+            };
+            PopulateSelectLists();
+            return View(vm);
         }
 
         [Authorize("Visits.Edit")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PatientId,DoctorId,VisitDate,VisitType,Notes")] Visit visit)
+        public async Task<IActionResult> Edit(int id, VisitViewModel vm)
         {
-            if (id != visit.Id)
+            if (id != vm.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(visit);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!VisitExists(visit.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["DoctorId"] = new SelectList(_context.Doctors, "Id", "Id", visit.DoctorId);
-            ViewData["PatientId"] = new SelectList(_context.Patients, "Id", "Id", visit.PatientId);
-            return View(visit);
-        }
-
-        [Authorize("Visits.Edit")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
+                PopulateSelectLists();
+                return View(vm);
             }
 
-            var visit = await _context.Visits
-                .Include(v => v.Doctor)
-                .Include(v => v.Patient)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (visit == null)
-            {
-                return NotFound();
-            }
-
-            return View(visit);
-        }
-
-        // POST: Visits/Delete/5
-        [Authorize("Visits.Edit")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
             var visit = await _context.Visits.FindAsync(id);
-            if (visit != null)
+            if (visit == null) return NotFound();
+
+            visit.PatientId = vm.PatientId;
+            visit.DoctorId = vm.DoctorId;
+            visit.VisitDate = vm.VisitDate;
+            visit.Notes = vm.Notes;
+
+            try
             {
-                _context.Visits.Remove(visit);
+                _context.Update(visit);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VisitExists(visit.Id)) return NotFound();
+                else throw;
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+
 
         private bool VisitExists(int id)
         {
@@ -189,7 +180,47 @@ namespace A_Very_Simple_HIS.Controllers
             return Json(new { data = allVisits });
         }
 
+
+        [HttpPost]
+        [Authorize("Patients.Edit")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var objFromDb = await _context.Visits.FirstOrDefaultAsync(v => v.Id == id);
+            if (objFromDb == null)
+            {
+                return Json(new { success = false, message = "Error While Deleting" });
+            }
+            _context.Visits.Remove(objFromDb);
+            await _context.SaveChangesAsync();
+            return Json(new { success = true, data = "Delete Successful" });
+        }
+
         #endregion
+
+        //Helpers
+        private void PopulateSelectLists(int? selectedPatientId = null, int? selectedDoctorId = null)
+        {
+            var doctors = _context.Doctors
+            .AsNoTracking()
+            .Select(d => new
+            {
+                d.Id,
+                FullName = d.FirstName + " " + d.LastName, 
+            })
+            .ToList();
+
+                var patients = _context.Patients
+                    .AsNoTracking()
+                    .Select(p => new
+                    {
+                        p.Id,
+                        FullName = p.FirstName + " " + p.LastName
+                    })
+                    .ToList();
+
+                ViewData["DoctorId"] = new SelectList(doctors, "Id", "FullName", selectedDoctorId);
+                ViewData["PatientId"] = new SelectList(patients, "Id", "FullName", selectedPatientId);
+        }
 
     }
 }
